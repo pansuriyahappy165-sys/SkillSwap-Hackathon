@@ -82,7 +82,7 @@ const translations = {
 };
 
 function App() {
-  const [authMode, setAuthMode] = useState('login');
+  const [authMode, setAuthMode] = useState('landing');
   const [token, setToken] = useState(localStorage.getItem('token') || '');
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || 'null'));
   const [showSplash, setShowSplash] = useState(true);
@@ -657,6 +657,38 @@ const profileCompletion =
   );
 }
   if (!token || !user) {
+    if (dashboardView === 'explore') {
+      return (
+        <ExploreSkillsScreen
+          settings={settings}
+          search={exploreSearch}
+          setSearch={setExploreSearch}
+          category={exploreCategory}
+          setCategory={setExploreCategory}
+          skills={exploreSkills}
+          onSelectSkill={openExploreSkill}
+          onBack={() => setAuthMode('landing')}
+          onNavigate={setDashboardView}
+          onLogout={handleLogout}
+        />
+      );
+    }
+
+    if (authMode === 'landing') {
+      return (
+        <LandingPage
+          onLogin={() => changeAuthPage('login')}
+          onRegister={() => changeAuthPage('register')}
+          onHome={() => setDashboardView('dashboard')}
+          onBrowse={() => setDashboardView('explore')}
+          onSearch={(keyword) => {
+            setExploreSearch(keyword.trim());
+            setDashboardView('explore');
+          }}
+        />
+      );
+    }
+
     return (
       <main className="auth-page">
         <div className="auth-orb auth-orb-one" aria-hidden="true" />
@@ -783,6 +815,130 @@ const profileCompletion =
             </section>
           </div>
         </div>
+      </main>
+    );
+  }
+
+  function LandingPage({ onLogin, onRegister, onHome, onBrowse, onSearch }) {
+    const [keyword, setKeyword] = useState('');
+    const popularSkills = ['Photoshop', 'Excel', 'Coding', 'Guitar', 'English', 'UI Design'];
+
+    const submitSearch = (event) => {
+      event.preventDefault();
+      onSearch(keyword);
+    };
+
+    return (
+      <main className="landing-page">
+        <nav className="navbar navbar-expand-lg landing-nav">
+          <div className="container">
+            <button className="navbar-brand landing-brand" type="button" onClick={onHome}>
+              <span className="landing-brand-mark" aria-hidden="true">↔</span>
+              SkillSwap
+            </button>
+            <div className="landing-nav-links">
+              <button type="button" className="landing-nav-link active" onClick={onHome}>Home</button>
+              <button type="button" className="landing-nav-link" onClick={onBrowse}>Browse Skills</button>
+            </div>
+            <div className="landing-nav-actions">
+              <button type="button" className="landing-nav-link" onClick={onLogin}>Login</button>
+              <button type="button" className="btn landing-signup" onClick={onRegister}>Sign Up</button>
+            </div>
+          </div>
+        </nav>
+
+        <section className="landing-hero">
+          <div className="container">
+            <div className="row align-items-center g-5">
+              <div className="col-lg-6">
+                <p className="landing-eyebrow">LEARN. TEACH. CONNECT.</p>
+                <h1>Exchange Skills.<br /><span>Grow Together.</span></h1>
+                <p className="landing-subtitle">Share what you know. Learn what you want.</p>
+                <form className="landing-search" onSubmit={submitSearch}>
+                  <span aria-hidden="true">⌕</span>
+                  <input
+                    type="search"
+                    aria-label="Search for a skill"
+                    placeholder="Search for a skill (e.g. Photoshop, Excel...)"
+                    value={keyword}
+                    onChange={(event) => setKeyword(event.target.value)}
+                  />
+                  <button type="submit" className="btn landing-search-button">Find a Skill</button>
+                </form>
+                <div className="landing-hero-actions">
+                  <button type="button" className="btn landing-offer-button" onClick={onRegister}>Offer Your Skill <span aria-hidden="true">→</span></button>
+                </div>
+                <div className="landing-popular">
+                  <span>Popular skills</span>
+                  <div className="landing-skill-pills">
+                    {popularSkills.map((skill) => <button type="button" key={skill} onClick={() => onSearch(skill)}>{skill}</button>)}
+                  </div>
+                </div>
+              </div>
+              <div className="col-lg-6">
+                <div className="landing-illustration" aria-label="Students exchanging skills" role="img">
+                  <div className="landing-illustration-sun" aria-hidden="true" />
+                  <div className="landing-person landing-person-left"><span>✦</span></div>
+                  <div className="landing-person landing-person-right"><span>↗</span></div>
+                  <div className="landing-exchange" aria-hidden="true">↔</div>
+                  <div className="landing-note landing-note-one">Design</div>
+                  <div className="landing-note landing-note-two">Coding</div>
+                  <div className="landing-ground" aria-hidden="true" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="landing-how-it-works">
+          <div className="container">
+            <div className="text-center landing-section-heading">
+              <p className="landing-eyebrow">SIMPLE BY DESIGN</p>
+              <h2>How SkillSwap works</h2>
+            </div>
+            <div className="row g-4">
+              {[
+                ['♙', 'Create Profile', 'List your skills and preferences'],
+                ['⌕', 'Find a Skill', 'Search or browse other users'],
+                ['↔', 'Swap', 'Connect and learn together'],
+              ].map(([icon, title, description]) => (
+                <div className="col-md-4" key={title}>
+                  <article className="landing-step-card">
+                    <span className="landing-step-icon" aria-hidden="true">{icon}</span>
+                    <h3>{title}</h3>
+                    <p>{description}</p>
+                  </article>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <footer className="landing-footer">
+          <div className="container">
+            <div className="landing-footer-main">
+              <div>
+                <button className="landing-brand landing-footer-brand" type="button" onClick={onHome}>
+                  <span className="landing-brand-mark" aria-hidden="true">↔</span>
+                  SkillSwap
+                </button>
+                <p>Exchange skills, connect with people, and grow together.</p>
+              </div>
+              <nav className="landing-footer-links" aria-label="Footer navigation">
+                <a href="#about">About</a>
+                <button type="button" onClick={onBrowse}>Browse Skills</button>
+                <a href="mailto:support@skillswap.ai">Contact</a>
+                <a href="#privacy">Privacy Policy</a>
+              </nav>
+              <div className="landing-social-links" aria-label="Social media links">
+                <a href="#linkedin" aria-label="LinkedIn">in</a>
+                <a href="#instagram" aria-label="Instagram">◎</a>
+                <a href="#twitter" aria-label="Twitter">𝕏</a>
+              </div>
+            </div>
+            <div className="landing-footer-bottom">© 2025 SkillSwap. Built for curious learners.</div>
+          </div>
+        </footer>
       </main>
     );
   }
