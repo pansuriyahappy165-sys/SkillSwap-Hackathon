@@ -689,6 +689,20 @@ const profileCompletion =
       );
     }
 
+    if (authMode === 'register') {
+      return (
+        <RegisterPage
+          form={form}
+          loading={loading}
+          error={error}
+          success={success}
+          onChange={handleFieldChange}
+          onSubmit={handleAuthSubmit}
+          onLogin={() => changeAuthPage('login')}
+        />
+      );
+    }
+
     return (
       <main className="auth-page">
         <div className="auth-orb auth-orb-one" aria-hidden="true" />
@@ -939,6 +953,62 @@ const profileCompletion =
             <div className="landing-footer-bottom">© 2025 SkillSwap. Built for curious learners.</div>
           </div>
         </footer>
+      </main>
+    );
+  }
+
+  function RegisterPage({ form, loading, error, success, onChange, onSubmit, onLogin }) {
+    return (
+      <main className="register-page">
+        <section className="register-card" aria-labelledby="register-title">
+          <button className="register-logo" type="button" onClick={onLogin} aria-label="Back to login">
+            <span className="landing-brand-mark" aria-hidden="true">↔</span>
+            <span>SkillSwap</span>
+          </button>
+          <div className="register-heading">
+            <h1 id="register-title">Create Your Account</h1>
+            <p>Join our community and start swapping skills</p>
+          </div>
+
+          {error ? <div className="alert alert-danger register-alert" role="alert">{error}</div> : null}
+          {success ? <div className="alert alert-success register-alert" role="status">{success}</div> : null}
+
+          <form className="register-form" onSubmit={onSubmit}>
+            <label className="register-field" htmlFor="registerName">
+              <span>Full Name</span>
+              <div className="register-input-wrap">
+                <span className="register-input-icon" aria-hidden="true">♙</span>
+                <input id="registerName" name="name" placeholder="Enter your full name" value={form.name} onChange={onChange} autoComplete="name" required />
+              </div>
+            </label>
+            <label className="register-field" htmlFor="registerEmail">
+              <span>Email</span>
+              <div className="register-input-wrap">
+                <span className="register-input-icon" aria-hidden="true">@</span>
+                <input id="registerEmail" type="email" name="email" placeholder="Enter your email" value={form.email} onChange={onChange} autoComplete="email" required />
+              </div>
+            </label>
+            <label className="register-field" htmlFor="registerPassword">
+              <span>Password</span>
+              <div className="register-input-wrap">
+                <span className="register-input-icon" aria-hidden="true">●</span>
+                <input id="registerPassword" type="password" name="password" placeholder="Enter your password" value={form.password} onChange={onChange} autoComplete="new-password" required />
+              </div>
+            </label>
+            <label className="register-field" htmlFor="registerConfirmPassword">
+              <span>Confirm Password</span>
+              <div className="register-input-wrap">
+                <span className="register-input-icon" aria-hidden="true">●</span>
+                <input id="registerConfirmPassword" type="password" name="confirmPassword" placeholder="Confirm your password" value={form.confirmPassword} onChange={onChange} autoComplete="new-password" required />
+              </div>
+            </label>
+            <button className="register-submit" type="submit" disabled={loading}>
+              {loading ? 'Creating account...' : 'Create Account'}
+            </button>
+          </form>
+
+          <p className="register-login-prompt">Already have an account? <button type="button" onClick={onLogin}>Login</button></p>
+        </section>
       </main>
     );
   }
