@@ -93,7 +93,8 @@ function App() {
 
   return () => clearTimeout(timer);
 }, []);
-  const [dashboardView, setDashboardView] = useState('dashboard');
+  const [dashboardView, setDashboardView] = useState(() => token && user ? 'dashboard' : 'auth');
+  const [completedSwap, setCompletedSwap] = useState(null);
   const [activeTab, setActiveTab] = useState("home");
   const [profile, setProfile] = useState(() => {
   try {
@@ -643,6 +644,7 @@ const profileCompletion =
     setRequests([]);
     setForm(initialForm);
     setAuthMode('login');
+    setDashboardView('auth');
     setError('');
     setSuccess('');
   };
@@ -667,7 +669,12 @@ const profileCompletion =
           setCategory={setExploreCategory}
           skills={exploreSkills}
           onSelectSkill={openExploreSkill}
-          onBack={() => setAuthMode('landing')}
+          users={users}
+          onViewProfile={openStudentProfile}
+          onRequestSwap={openStudentRequest}
+          onBack={() => setDashboardView('auth')}
+          onHome={() => setDashboardView('auth')}
+          onMySkills={() => setDashboardView('auth')}
           onNavigate={setDashboardView}
           onLogout={handleLogout}
         />
